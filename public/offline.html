@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bare — Offline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0805;
+    color: #F5E6C8;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 24px;
+  }
+  .bear { font-size: 72px; margin-bottom: 16px; animation: bounce 1s ease-in-out infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  h1 { font-size: 32px; letter-spacing: 4px; color: #E9B026; margin-bottom: 8px; }
+  p { font-size: 14px; opacity: 0.55; }
+  a { color: #E9B026; text-decoration: none; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="bear">🐻</div>
+    <h1>YOU'RE OFFLINE</h1>
+    <p>The bear needs WiFi to count your coins.<br>Check your connection and <a href="/game">try again</a>.</p>
+  </div>
+</body>
+</html>

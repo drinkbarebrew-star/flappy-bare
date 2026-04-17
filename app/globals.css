@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-bebas: 'Bebas Neue', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+
+  /* Brand Colors */
+  --color-gold: #E9B026;
+  --color-brown: #3D2914;
+  --color-light-gold: #FFC72C;
+  --color-deep-brown: #2A1B0D;
+  --color-cream: #F5E6C8;
+
+  /* Extended palette */
+  --color-ground: #0d0805;
+  --color-sky: #150c06;
+  --color-coral: #ff6b5b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: #0d0805;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Prevent text selection during gameplay */
+.game-canvas-wrapper {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Bebas Neue utility */
+.font-bebas {
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+/* Gold text glow */
+.text-glow-gold {
+  text-shadow: 0 0 20px rgba(233, 176, 38, 0.6), 0 2px 0 #2A1B0D;
+}
+
+/* Smooth opacity transitions */
+.fade-in {
+  animation: fadeIn 0.35s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.25s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Floating animation for idle bear */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Pulse animation for CTA buttons */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(233, 176, 38, 0.4); }
+  50%       { box-shadow: 0 0 0 12px rgba(233, 176, 38, 0); }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s ease infinite;
+}
+
+/* Coin spin */
+@keyframes coin-spin {
+  0%   { transform: scaleX(1); }
+  50%  { transform: scaleX(0.1); }
+  100% { transform: scaleX(1); }
+}
+
+/* Screen flash on death */
+@keyframes flash-red {
+  0%, 100% { background: transparent; }
+  30%      { background: rgba(255, 107, 91, 0.25); }
+}
+
+.flash-red {
+  animation: flash-red 0.5s ease;
+}
+
+/* iOS safe area */
+.safe-top    { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
