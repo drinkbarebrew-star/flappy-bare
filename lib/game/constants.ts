@@ -39,6 +39,8 @@ export const DEFAULT_CONFIG: GameConfig = {
   pipeWidth: 68,
   pipeGap: 162,
   pipeSpeed: 2.8,
+  pipeSpeedMax: 5.5,
+  pipeSpeedIncrement: 0.04,
   pipeSpawnInterval: 1600,
   bearSize: 38,
   groundHeight: 52,

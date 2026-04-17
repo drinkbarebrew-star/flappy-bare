@@ -32,6 +32,7 @@ export class GameEngine {
   private state: GameState = 'idle'
   private score = 0
   private coinsEarned = 0
+  private currentSpeed = 0
   private screenShake = 0
   private lastPipeSpawn = 0
   private animFrame: number | null = null
@@ -109,6 +110,7 @@ export class GameEngine {
     this.scoreFloats = []
     this.score = 0
     this.coinsEarned = 0
+    this.currentSpeed = this.cfg.pipeSpeed
     this.screenShake = 0
     this.lastPipeSpawn = 0
   }
@@ -179,10 +181,15 @@ export class GameEngine {
       const t = Date.now() / 1000
       this.ctx.save()
       this.renderer.drawBackground()
-      this.bear.y = this.H * 0.45 + Math.sin(t * 2) * 12
-      this.bear.rotation = Math.sin(t * 3) * 0.08
-      this.bear.flapPhase = t * 4
-      this.renderer.drawBear(this.bear)
+      // Center the idle bear (gameplay bear stays at x=W*0.25)
+      const idleBear = {
+        ...this.bear,
+        x: this.W * 0.5,
+        y: this.H * 0.42 + Math.sin(t * 2) * 12,
+        rotation: Math.sin(t * 3) * 0.07,
+        flapPhase: t * 4,
+      }
+      this.renderer.drawBear(idleBear)
       this.ctx.restore()
       this.idleFrame = requestAnimationFrame(idle)
     }
@@ -206,7 +213,7 @@ export class GameEngine {
     if (this.state !== 'playing') return
 
     const { cfg, bear, W, H } = this
-    const speed = cfg.pipeSpeed
+    const speed = this.currentSpeed
 
     this.renderer.tick(speed)
 
@@ -256,6 +263,11 @@ export class GameEngine {
       if (!p.scored && p.x + cfg.pipeWidth < bear.x) {
         p.scored = true
         this.score++
+        // Increase difficulty
+        this.currentSpeed = Math.min(
+          cfg.pipeSpeedMax,
+          this.currentSpeed + cfg.pipeSpeedIncrement
+        )
         const coinsFromPillar = cfg.coinsPerPillar +
           (this.score % cfg.bonusCoinsEvery === 0 ? cfg.bonusCoinAmount : 0)
 

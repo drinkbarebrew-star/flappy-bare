@@ -35,10 +35,8 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         </p>
       </div>
 
-      {/* Bear emoji (animated by canvas, emoji as fallback) */}
-      <div className="text-[80px] mb-6" style={{ animation: 'float 2s ease-in-out infinite' }}>
-        🐻
-      </div>
+      {/* Bear is drawn on the canvas behind this overlay — no emoji needed */}
+      <div className="mb-12" />
 
       {/* Best score */}
       {bestScore > 0 && (

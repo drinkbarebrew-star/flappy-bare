@@ -76,7 +76,9 @@ export interface GameConfig {
   flapForce: number
   pipeWidth: number
   pipeGap: number
-  pipeSpeed: number
+  pipeSpeed: number          // starting speed
+  pipeSpeedMax: number       // hard cap
+  pipeSpeedIncrement: number // added per pillar cleared
   pipeSpawnInterval: number  // ms
   bearSize: number
   groundHeight: number
