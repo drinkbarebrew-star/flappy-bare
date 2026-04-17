@@ -471,6 +471,10 @@ export class GameEngine {
   // Boot idle animation immediately
   boot() {
     this.initObjects()
+    // Preload bear sprite — renderer falls back to canvas drawing until ready
+    const img = new Image()
+    img.src = '/bear.png'
+    img.onload = () => this.renderer.setBearImage(img)
     this.startIdleLoop()
   }
 }

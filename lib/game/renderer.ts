@@ -9,9 +9,14 @@ export class Renderer {
   private W: number = 0
   private H: number = 0
   private groundOffset: number = 0
+  private bearImage: HTMLImageElement | null = null
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
+  }
+
+  setBearImage(img: HTMLImageElement) {
+    this.bearImage = img
   }
 
   setSize(w: number, h: number) {
@@ -95,93 +100,103 @@ export class Renderer {
 
     const s = BS
 
-    // Body
-    const bodyGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, s * 0.48)
-    bodyGrad.addColorStop(0,   '#d4a850')
-    bodyGrad.addColorStop(0.5, '#a07828')
-    bodyGrad.addColorStop(1,   '#5a4410')
-    ctx.fillStyle = bodyGrad
-    ctx.beginPath()
-    ctx.ellipse(0, 0, s * 0.44, s * 0.48, 0, 0, Math.PI * 2)
-    ctx.fill()
+    if (this.bearImage) {
+      // ── PNG sprite path ───────────────────────────────────────
+      // Flapping wings drawn first (behind sprite)
+      const wingAngle = Math.sin(bear.flapPhase) * 0.6
+      for (const [dx, sign] of [[-s * 0.54, -1], [s * 0.54, 1]] as [number, number][]) {
+        ctx.save()
+        ctx.translate(dx, s * 0.05)
+        ctx.rotate(sign * 0.4 - sign * wingAngle)
+        ctx.fillStyle = '#c8923a'
+        ctx.beginPath()
+        ctx.ellipse(0, 0, s * 0.3, s * 0.13, sign * 0.25, 0, Math.PI * 2)
+        ctx.fill()
+        // Wing sheen
+        ctx.fillStyle = 'rgba(255,199,44,0.18)'
+        ctx.beginPath()
+        ctx.ellipse(0, 0, s * 0.18, s * 0.07, sign * 0.25, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
 
-    // Head
-    const headY = -s * 0.38
-    const headGrad = ctx.createRadialGradient(-s * 0.05, headY - s * 0.05, 2, 0, headY, s * 0.3)
-    headGrad.addColorStop(0, '#c8923a')
-    headGrad.addColorStop(1, '#8B6914')
-    ctx.fillStyle = headGrad
-    ctx.beginPath()
-    ctx.arc(0, headY, s * 0.3, 0, Math.PI * 2)
-    ctx.fill()
+      // Bear PNG centered (square, diameter = bearSize * 2.1)
+      const d = s * 2.1
+      ctx.drawImage(this.bearImage, -d / 2, -d / 2, d, d)
 
-    // Ears
-    for (const ex of [-s * 0.22, s * 0.22]) {
-      ctx.fillStyle = '#7a5a10'
+      // Gold glow ring
+      ctx.strokeStyle = 'rgba(233, 176, 38, 0.35)'
+      ctx.lineWidth = 2.5
       ctx.beginPath()
-      ctx.arc(ex, headY - s * 0.26, s * 0.13, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.fillStyle = '#c8923a'
+      ctx.arc(0, 0, s * 0.82, 0, Math.PI * 2)
+      ctx.stroke()
+    } else {
+      // ── Fallback: canvas-drawn bear (shown while PNG loads) ───
+      const bodyGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, s * 0.48)
+      bodyGrad.addColorStop(0,   '#d4a850')
+      bodyGrad.addColorStop(0.5, '#a07828')
+      bodyGrad.addColorStop(1,   '#5a4410')
+      ctx.fillStyle = bodyGrad
       ctx.beginPath()
-      ctx.arc(ex, headY - s * 0.26, s * 0.07, 0, Math.PI * 2)
+      ctx.ellipse(0, 0, s * 0.44, s * 0.48, 0, 0, Math.PI * 2)
       ctx.fill()
+
+      const headY = -s * 0.38
+      const headGrad = ctx.createRadialGradient(-s * 0.05, headY - s * 0.05, 2, 0, headY, s * 0.3)
+      headGrad.addColorStop(0, '#c8923a')
+      headGrad.addColorStop(1, '#8B6914')
+      ctx.fillStyle = headGrad
+      ctx.beginPath()
+      ctx.arc(0, headY, s * 0.3, 0, Math.PI * 2)
+      ctx.fill()
+
+      for (const ex of [-s * 0.22, s * 0.22]) {
+        ctx.fillStyle = '#7a5a10'
+        ctx.beginPath()
+        ctx.arc(ex, headY - s * 0.26, s * 0.13, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.fillStyle = '#c8923a'
+        ctx.beginPath()
+        ctx.arc(ex, headY - s * 0.26, s * 0.07, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      ctx.fillStyle = '#d4a850'
+      ctx.beginPath()
+      ctx.ellipse(0, headY + s * 0.09, s * 0.16, s * 0.12, 0, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.fillStyle = COLORS.deepBrown
+      ctx.beginPath()
+      ctx.ellipse(0, headY + s * 0.02, s * 0.06, s * 0.04, 0, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.fillStyle = COLORS.deepBrown
+      for (const ex of [-s * 0.1, s * 0.1]) {
+        ctx.beginPath()
+        ctx.arc(ex, headY - s * 0.07, s * 0.048, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      const wingAngle = Math.sin(bear.flapPhase) * 0.55
+      for (const [dx, sign] of [[-s * 0.38, -1], [s * 0.38, 1]] as [number, number][]) {
+        ctx.save()
+        ctx.translate(dx, -s * 0.05)
+        ctx.rotate(sign * 0.35 - sign * wingAngle)
+        ctx.fillStyle = '#9a7020'
+        ctx.beginPath()
+        ctx.ellipse(0, 0, s * 0.24, s * 0.1, sign * 0.3, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      ctx.fillStyle = COLORS.gold
+      ctx.globalAlpha = 0.28
+      ctx.beginPath()
+      ctx.ellipse(0, s * 0.12, s * 0.2, s * 0.22, 0, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.globalAlpha = 1
     }
-
-    // Snout
-    ctx.fillStyle = '#d4a850'
-    ctx.beginPath()
-    ctx.ellipse(0, headY + s * 0.09, s * 0.16, s * 0.12, 0, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Nose
-    ctx.fillStyle = COLORS.deepBrown
-    ctx.beginPath()
-    ctx.ellipse(0, headY + s * 0.02, s * 0.06, s * 0.04, 0, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Eyes
-    ctx.fillStyle = COLORS.deepBrown
-    for (const ex of [-s * 0.1, s * 0.1]) {
-      ctx.beginPath()
-      ctx.arc(ex, headY - s * 0.07, s * 0.048, 0, Math.PI * 2)
-      ctx.fill()
-    }
-    // Eye shine
-    ctx.fillStyle = COLORS.cream
-    ctx.beginPath()
-    ctx.arc(-s * 0.08, headY - s * 0.09, s * 0.018, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(s * 0.12, headY - s * 0.09, s * 0.018, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Wings / arms
-    const wingAngle = Math.sin(bear.flapPhase) * 0.55
-    for (const [dx, sign] of [[-s * 0.38, -1], [s * 0.38, 1]] as [number, number][]) {
-      ctx.save()
-      ctx.translate(dx, -s * 0.05)
-      ctx.rotate(sign * 0.35 - sign * wingAngle)
-      ctx.fillStyle = '#9a7020'
-      ctx.beginPath()
-      ctx.ellipse(0, 0, s * 0.24, s * 0.1, sign * 0.3, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.restore()
-    }
-
-    // Golden belly patch (brand)
-    ctx.fillStyle = COLORS.gold
-    ctx.globalAlpha = 0.28
-    ctx.beginPath()
-    ctx.ellipse(0, s * 0.12, s * 0.2, s * 0.22, 0, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.globalAlpha = 1
-
-    // Gold glow outline when alive
-    ctx.strokeStyle = `rgba(233, 176, 38, 0.3)`
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    ctx.ellipse(0, 0, s * 0.44, s * 0.48, 0, 0, Math.PI * 2)
-    ctx.stroke()
 
     ctx.restore()
   }
@@ -235,12 +250,19 @@ export class Renderer {
     ctx.fillStyle = 'rgba(42, 27, 13, 0.55)'
     ctx.fillRect(0, h * 0.52, w, h * 0.18)
 
-    // "BB" logo
-    ctx.fillStyle = COLORS.deepBrown
-    ctx.font = `bold ${Math.min(w * 0.38, 22)}px 'Bebas Neue', monospace`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText('BB', w / 2, h * 0.32)
+    // Bear logo on can
+    if (this.bearImage && h > 40) {
+      const logoSize = Math.min(w * 0.72, h * 0.42, 44)
+      ctx.globalAlpha = 0.82
+      ctx.drawImage(this.bearImage, (w - logoSize) / 2, h * 0.14, logoSize, logoSize)
+      ctx.globalAlpha = 1
+    } else {
+      ctx.fillStyle = COLORS.deepBrown
+      ctx.font = `bold ${Math.min(w * 0.38, 22)}px 'Bebas Neue', monospace`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText('BB', w / 2, h * 0.32)
+    }
 
     // Lip / rim at open end
     ctx.fillStyle = '#c8a030'

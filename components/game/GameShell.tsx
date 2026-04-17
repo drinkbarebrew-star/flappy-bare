@@ -10,10 +10,19 @@ import InstallPrompt from './InstallPrompt'
 import { useAuth } from '@/hooks/useAuth'
 import { useRunQuota } from '@/hooks/useRunQuota'
 
+// Refs-based flap so the native event listener always calls the latest version
+// without needing to be re-registered on every state change.
+function useFlapRef(fn: () => void) {
+  const ref = useRef(fn)
+  ref.current = fn
+  return ref
+}
+
 export default function GameShell() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const engineRef = useRef<GameEngine | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const innerRef = useRef<HTMLDivElement>(null)
 
   const [gameState, setGameState] = useState<GameState>('idle')
   const [score, setScore] = useState(0)
@@ -102,6 +111,34 @@ export default function GameShell() {
     setTimeout(() => engineRef.current?.flap(), 100)
   }, [user, runsLeft])
 
+  // ── Stable ref so native event listeners never go stale ──────
+  const flapRef = useFlapRef(handleFlap)
+
+  // ── Native touchstart (passive:false) — iOS Safari requires
+  //    this to call preventDefault() which stops scroll/zoom ────
+  useEffect(() => {
+    const el = innerRef.current
+    if (!el) return
+    const onTouch = (e: TouchEvent) => {
+      e.preventDefault()
+      flapRef.current()
+    }
+    el.addEventListener('touchstart', onTouch, { passive: false })
+    return () => el.removeEventListener('touchstart', onTouch)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Orientation change — delay resize so viewport settles ────
+  useEffect(() => {
+    const onOrientation = () => setTimeout(() => engineRef.current?.resize(), 250)
+    window.addEventListener('orientationchange', onOrientation)
+    // visualViewport catches iOS Safari bar show/hide as well
+    window.visualViewport?.addEventListener('resize', onOrientation)
+    return () => {
+      window.removeEventListener('orientationchange', onOrientation)
+      window.visualViewport?.removeEventListener('resize', onOrientation)
+    }
+  }, [])
+
   return (
     <div
       ref={wrapperRef}
@@ -109,6 +146,7 @@ export default function GameShell() {
     >
       {/* Canvas wrapper — max 480×854 (9:16) */}
       <div
+        ref={innerRef}
         className="relative w-full h-full"
         style={{ maxWidth: 480, maxHeight: 854 }}
         onPointerDown={(e) => { e.preventDefault(); handleFlap() }}

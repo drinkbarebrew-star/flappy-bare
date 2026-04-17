@@ -85,6 +85,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to save session' }, { status: 500 })
     }
 
+    // ─── Increment run quota ──────────────────────────────────
+    // Must happen regardless of validity — otherwise quota is bypassable
+    // by submitting runs that fail anti-cheat
+    await supabase.rpc('increment_runs_today', { p_user_id: user.id })
+
     if (!isValid) {
       return NextResponse.json({ ok: true, valid: false, reason: invalidReason })
     }
