@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     // ─── Update leaderboard ───────────────────────────────────
     const { data: lb } = await supabase
       .from('leaderboard')
-      .select('all_time_best, weekly_best')
+      .select('all_time_best, weekly_best, total_coins')
       .eq('user_id', user.id)
       .single()
 
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
       username: user.email?.split('@')[0] ?? 'Bear',
       all_time_best: newAllTime,
       weekly_best: newWeekly,
-      total_coins: coinsEarned,
+      total_coins: (lb?.total_coins ?? 0) + coinsEarned,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
 

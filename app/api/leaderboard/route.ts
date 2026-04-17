@@ -30,12 +30,6 @@ export async function GET(req: NextRequest) {
     let myRank: number | null = null
 
     if (user) {
-      const { count } = await supabase
-        .from('leaderboard')
-        .select('user_id', { count: 'exact', head: true })
-        .gt(column, supabase.from('leaderboard').select(column).eq('user_id', user.id).single())
-
-      // Simpler approach
       const { data: myEntry } = await supabase
         .from('leaderboard')
         .select(column)
