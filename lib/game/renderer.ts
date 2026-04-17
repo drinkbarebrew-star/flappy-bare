@@ -120,15 +120,21 @@ export class Renderer {
         ctx.restore()
       }
 
-      // Bear PNG centered (square, diameter = bearSize * 2.1)
+      // Bear PNG clipped to a circle
+      const r = s * 0.82
       const d = s * 2.1
+      ctx.save()
+      ctx.beginPath()
+      ctx.arc(0, 0, r, 0, Math.PI * 2)
+      ctx.clip()
       ctx.drawImage(this.bearImage, -d / 2, -d / 2, d, d)
+      ctx.restore()
 
-      // Gold glow ring
+      // Gold glow ring (drawn after restore so it's outside the clip)
       ctx.strokeStyle = 'rgba(233, 176, 38, 0.35)'
       ctx.lineWidth = 2.5
       ctx.beginPath()
-      ctx.arc(0, 0, s * 0.82, 0, Math.PI * 2)
+      ctx.arc(0, 0, r, 0, Math.PI * 2)
       ctx.stroke()
     } else {
       // ── Fallback: canvas-drawn bear (shown while PNG loads) ───
