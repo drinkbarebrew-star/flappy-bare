@@ -34,14 +34,14 @@ export const COLORS = {
 
 // ─── Game Physics ─────────────────────────────────────────────
 export const DEFAULT_CONFIG: GameConfig = {
-  gravity: 0.28,
-  flapForce: -9.0,
+  gravity: 0.22,
+  flapForce: -7.5,
   pipeWidth: 80,
-  pipeGap: 360,
-  pipeSpeed: 1.8,
-  pipeSpeedMax: 2.0,
-  pipeSpeedIncrement: 0.01,
-  pipeSpawnInterval: 2800,
+  pipeGap: 400,
+  pipeSpeed: 1.4,
+  pipeSpeedMax: 1.8,
+  pipeSpeedIncrement: 0.005,
+  pipeSpawnInterval: 3200,
   bearSize: 38,
   groundHeight: 52,
   coinsPerPillar: 5,

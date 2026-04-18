@@ -232,8 +232,8 @@ export class GameEngine {
     if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval || this.pillars.length === 0) {
       const minTop = 90
       const maxTop = H - cfg.groundHeight - cfg.pipeGap - 90
-      // All pipes: center gap near bear's current Y ± 50px so it's always reachable
-      const gapCenter = bear.y + (Math.random() - 0.5) * 100
+      // All pipes: center gap within ±40px of bear's current Y — always reachable
+      const gapCenter = bear.y + (Math.random() - 0.5) * 80
       const topH = Math.max(minTop, Math.min(maxTop, gapCenter - cfg.pipeGap / 2))
       const pillar: Pillar = {
         id: uid(),
@@ -372,10 +372,11 @@ export class GameEngine {
     // Use 50% of nominal radius — well inside the visual sprite
     const br = bear.radius * 0.5
     // Shrink pipe hitboxes inward for generous visual forgiveness
-    const pf = 20 // px inward per side
+    const pf = 30 // px inward per side
 
     // Ground (ceiling is handled as a soft bounce in physics, not a kill)
-    if (bear.y + br > H - cfg.groundHeight) {
+    // Extra 10px buffer — bear grazes the ground visually before dying
+    if (bear.y + br > H - cfg.groundHeight + 10) {
       console.log('[DIE] ground  bear.y=', bear.y.toFixed(1), 'H=', H, 'ground=', H - cfg.groundHeight)
       return true
     }

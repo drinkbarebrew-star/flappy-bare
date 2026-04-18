@@ -165,7 +165,7 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         className="absolute top-3 right-3 text-[10px] font-montserrat"
         style={{ color: '#F5E6C8', opacity: 0.25 }}
       >
-        v8
+        v9
       </div>
     </div>
   )
