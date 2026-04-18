@@ -218,6 +218,16 @@ export class GameEngine {
     bear.flapSpeed *= Math.pow(0.92, dtFactor)
     if (bear.flapSpeed < 2) bear.flapSpeed = 2
 
+    // Terminal velocity cap — prevents insane fall speeds on slow frames
+    if (bear.vy > 18) bear.vy = 18
+
+    // Ceiling: soft bounce instead of instant death
+    const bs = bear.radius
+    if (bear.y - bs < 0) {
+      bear.y = bs
+      bear.vy = Math.abs(bear.vy) * 0.25  // redirect downward, kill energy
+    }
+
     // Spawn pillars
     if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval || this.pillars.length === 0) {
       const minTop = 90
@@ -361,16 +371,12 @@ export class GameEngine {
     const { bear, pillars, cfg, H } = this
     // Use 50% of nominal radius — well inside the visual sprite
     const br = bear.radius * 0.5
-    // Shrink pipe hitboxes inward for forgiveness
-    const pf = 12 // px inward per side
+    // Shrink pipe hitboxes inward for generous visual forgiveness
+    const pf = 20 // px inward per side
 
-    // Ground / ceiling
+    // Ground (ceiling is handled as a soft bounce in physics, not a kill)
     if (bear.y + br > H - cfg.groundHeight) {
       console.log('[DIE] ground  bear.y=', bear.y.toFixed(1), 'H=', H, 'ground=', H - cfg.groundHeight)
-      return true
-    }
-    if (bear.y - br < 0) {
-      console.log('[DIE] ceiling bear.y=', bear.y.toFixed(1))
       return true
     }
 
