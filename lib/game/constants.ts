@@ -36,7 +36,7 @@ export const COLORS = {
 export const DEFAULT_CONFIG: GameConfig = {
   gravity: 0.45,
   flapForce: -7.5,
-  pipeWidth: 68,
+  pipeWidth: 80,
   pipeGap: 195,
   pipeSpeed: 2.8,
   pipeSpeedMax: 5.5,

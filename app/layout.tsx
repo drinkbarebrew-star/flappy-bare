@@ -25,8 +25,11 @@ export const metadata: Metadata = {
     description: 'The Bare Brew game — earn real coffee rewards.',
   },
   icons: {
-    icon: '/icons/icon-192.png',
-    apple: '/icons/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml' },
+    ],
+    apple: '/icons/apple-touch-icon.svg',
   },
 }
 

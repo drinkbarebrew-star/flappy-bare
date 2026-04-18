@@ -355,10 +355,10 @@ export class GameEngine {
 
   private checkCollision(): boolean {
     const { bear, pillars, cfg, H } = this
-    // Use 75% of nominal radius — well inside the visual sprite
-    const br = bear.radius * 0.75
+    // Use 50% of nominal radius — well inside the visual sprite
+    const br = bear.radius * 0.5
     // Shrink pipe hitboxes inward for forgiveness
-    const pf = 6 // px inward per side
+    const pf = 12 // px inward per side
 
     // Ground / ceiling
     if (bear.y + br > H - cfg.groundHeight || bear.y - br < 0) return true

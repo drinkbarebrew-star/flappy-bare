@@ -1,37 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <!-- Background -->
-  <rect width="512" height="512" rx="112.64" fill="#2A1B0D"/>
-
-  <!-- Gold circle bg -->
-  <circle cx="256" cy="256" r="163.4304" fill="#E9B026" opacity="0.15"/>
-
-  <!-- Bear ears -->
-  <circle cx="168.96" cy="143.36" r="38.912000000000006" fill="#8B6914"/>
-  <circle cx="343.04" cy="143.36" r="38.912000000000006" fill="#8B6914"/>
-  <circle cx="168.96" cy="143.36" r="21.401600000000002" fill="#c8923a"/>
-  <circle cx="343.04" cy="143.36" r="21.401600000000002" fill="#c8923a"/>
-
-  <!-- Bear head -->
-  <circle cx="256" cy="245.76" r="108.95360000000001" fill="#a07828"/>
-
-  <!-- Bear snout -->
-  <ellipse cx="256" cy="279.04" rx="54.476800000000004" ry="38.912000000000006" fill="#d4a850"/>
-
-  <!-- Bear nose -->
-  <ellipse cx="256" cy="258.56" rx="21.401600000000002" ry="14.78656" fill="#2A1B0D"/>
-
-  <!-- Eyes -->
-  <circle cx="222.72" cy="225.28" r="16.343040000000002" fill="#2A1B0D"/>
-  <circle cx="289.28" cy="225.28" r="16.343040000000002" fill="#2A1B0D"/>
-  <!-- Eye shine -->
-  <circle cx="229.376" cy="218.624" r="5.44768" fill="#F5E6C8"/>
-  <circle cx="295.936" cy="218.624" r="5.44768" fill="#F5E6C8"/>
-
-  <!-- Gold ring / brand accent -->
-  <circle cx="256" cy="245.76" r="116.73599999999999" fill="none" stroke="#E9B026" stroke-width="9.728000000000002" opacity="0.5"/>
-
-  <!-- "BB" text at bottom -->
-  <text x="256" y="419.84"
-    font-family="'Arial Black', sans-serif" font-weight="900" font-size="81.92"
-    fill="#E9B026" text-anchor="middle" letter-spacing="5.12">BB</text>
+  <!-- Maskable: full-bleed background, bear centered in safe zone -->
+  <rect width="512" height="512" fill="#2A1B0D"/>
+  <circle cx="256" cy="256" r="215.04" fill="#E9B026" opacity="0.15"/>
+  <circle cx="168.96" cy="143.36" r="51.2" fill="#8B6914"/>
+  <circle cx="343.04" cy="143.36" r="51.2" fill="#8B6914"/>
+  <circle cx="168.96" cy="143.36" r="28.16" fill="#c8923a"/>
+  <circle cx="343.04" cy="143.36" r="28.16" fill="#c8923a"/>
+  <circle cx="256" cy="245.76" r="143.36" fill="#a07828"/>
+  <ellipse cx="256" cy="278.78" rx="71.68" ry="51.2" fill="#d4a850"/>
+  <ellipse cx="256" cy="258.56" rx="28.16" ry="19.46" fill="#2A1B0D"/>
+  <circle cx="222.72" cy="225.28" r="21.5" fill="#2A1B0D"/>
+  <circle cx="289.28" cy="225.28" r="21.5" fill="#2A1B0D"/>
+  <circle cx="229.38" cy="218.62" r="7.17" fill="#F5E6C8"/>
+  <circle cx="295.94" cy="218.62" r="7.17" fill="#F5E6C8"/>
+  <circle cx="256" cy="245.76" r="153.6" fill="none" stroke="#E9B026" stroke-width="12.8" opacity="0.5"/>
+  <text x="256" y="419.84" font-family="'Arial Black', sans-serif" font-weight="900" font-size="81.92" fill="#E9B026" text-anchor="middle" letter-spacing="5.12">BB</text>
 </svg>
