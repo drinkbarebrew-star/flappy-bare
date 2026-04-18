@@ -65,8 +65,8 @@ export class Renderer {
     const { ctx, W, H } = this
 
     // ── Day/night cycle ──────────────────────────────────────
-    // Full cycle every 40 pipes. Phases: night→dawn→day→sunset→night
-    const cycle = (this.score % 40) / 40
+    // Full cycle every 20 pipes. Phases: night→dawn→day→sunset→night
+    const cycle = (this.score % 20) / 20
     // Map cycle position to sky blend
     let skyStops: [string, string, string, string, string]
     let starAlpha: number
@@ -88,7 +88,7 @@ export class Renderer {
       // Sun rising at right horizon
       const st = t
       sunX = W * (0.85 - st * 0.2); sunY = H * (0.78 - st * 0.28)
-      sunR = 18; sunColor = '#ffb060'; sunGlowColor = 'rgba(255,160,60,0.35)'
+      sunR = 26; sunColor = '#ffb060'; sunGlowColor = 'rgba(255,160,60,0.45)'
       showSun = t > 0.3
     } else if (cycle < 0.45) {
       // Dawn → Day
@@ -96,7 +96,7 @@ export class Renderer {
       skyStops = blendSky(SKY.dawn, SKY.day, t)
       starAlpha = 0
       sunX = W * (0.65 - t * 0.15); sunY = H * (0.5 - t * 0.35)
-      sunR = 18 + t * 6; sunColor = '#ffe090'; sunGlowColor = 'rgba(255,220,100,0.3)'
+      sunR = 26 + t * 6; sunColor = '#ffe090'; sunGlowColor = 'rgba(255,220,100,0.4)'
       showSun = true
     } else if (cycle < 0.6) {
       // Day (full)
@@ -104,7 +104,7 @@ export class Renderer {
       starAlpha = 0
       const t = (cycle - 0.45) / 0.15
       sunX = W * (0.5 - t * 0.15); sunY = H * (0.15 - t * 0.05)
-      sunR = 24; sunColor = '#fff0a0'; sunGlowColor = 'rgba(255,240,140,0.28)'
+      sunR = 32; sunColor = '#fff0a0'; sunGlowColor = 'rgba(255,240,140,0.38)'
       showSun = true
     } else if (cycle < 0.75) {
       // Day → Sunset
@@ -112,7 +112,7 @@ export class Renderer {
       skyStops = blendSky(SKY.day, SKY.sunset, t)
       starAlpha = 0
       sunX = W * (0.35 - t * 0.2); sunY = H * (0.2 + t * 0.55)
-      sunR = 24 - t * 6; sunColor = '#ff9040'; sunGlowColor = 'rgba(255,120,40,0.35)'
+      sunR = 32 - t * 8; sunColor = '#ff9040'; sunGlowColor = 'rgba(255,120,40,0.45)'
       showSun = true
     } else if (cycle < 0.88) {
       // Sunset → Night
@@ -120,7 +120,7 @@ export class Renderer {
       skyStops = blendSky(SKY.sunset, SKY.night, t)
       starAlpha = 0.18 * t
       sunX = W * 0.15; sunY = H * (0.75 + t * 0.1)
-      sunR = 18 - t * 8; sunColor = '#ff7030'; sunGlowColor = 'rgba(255,80,20,0.3)'
+      sunR = 24 - t * 10; sunColor = '#ff7030'; sunGlowColor = 'rgba(255,80,20,0.4)'
       showSun = (1 - t) > 0.2
     } else {
       // Night

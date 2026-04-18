@@ -220,13 +220,9 @@ export class GameEngine {
     if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval || this.pillars.length === 0) {
       const minTop = 90
       const maxTop = H - cfg.groundHeight - cfg.pipeGap - 90
-      let topH: number
-      if (this.pillars.length === 0) {
-        // First pipe: center the gap on the bear's current Y so it's always reachable
-        topH = Math.max(minTop, Math.min(maxTop, bear.y - cfg.pipeGap / 2))
-      } else {
-        topH = minTop + Math.random() * (maxTop - minTop)
-      }
+      // All pipes: center gap near bear's current Y ± 50px so it's always reachable
+      const gapCenter = bear.y + (Math.random() - 0.5) * 100
+      const topH = Math.max(minTop, Math.min(maxTop, gapCenter - cfg.pipeGap / 2))
       const pillar: Pillar = {
         id: uid(),
         x: W + 30,
