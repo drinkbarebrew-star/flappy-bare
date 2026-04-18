@@ -265,8 +265,13 @@ export class GameEngine {
         this.coinsEarned += coinsFromPillar
         this.session.pipeTimestamps.push(Date.now())
 
-        this.callbacks.onScoreChange(this.score)
-        this.callbacks.onCoinsChange(this.coinsEarned, coinsFromPillar)
+        this.renderer.setScore(this.score)
+        // Defer React state updates out of the rAF to avoid stutter
+        const _score = this.score, _coins = this.coinsEarned, _delta = coinsFromPillar
+        setTimeout(() => {
+          this.callbacks.onScoreChange(_score)
+          this.callbacks.onCoinsChange(_coins, _delta)
+        }, 0)
 
         // Score float
         this.scoreFloats.push({
@@ -444,8 +449,8 @@ export class GameEngine {
   }
 
   private spawnScoreParticles(x: number, y: number) {
-    for (let i = 0; i < 8; i++) {
-      const angle = (Math.PI * 2 / 8) * i
+    for (let i = 0; i < 5; i++) {
+      const angle = (Math.PI * 2 / 5) * i
       this.particles.push({
         x, y,
         vx: Math.cos(angle) * 3.5,

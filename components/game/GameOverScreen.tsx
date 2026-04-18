@@ -138,18 +138,23 @@ export default function GameOverScreen({
         <div className="w-full flex flex-col gap-2 mt-1">
           {(runsLeft > 0 || !user) && (
             <button
-              className="w-full rounded-2xl font-bebas text-2xl tracking-widest py-3.5 transition-transform active:scale-95"
+              className="w-full rounded-2xl font-bebas text-3xl tracking-widest py-4 transition-transform active:scale-95 pulse-gold"
               style={{
                 background: '#E9B026',
                 color: '#2A1B0D',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(233, 176, 38, 0.4)',
+                boxShadow: '0 6px 28px rgba(233, 176, 38, 0.55)',
               }}
               onClick={(e) => { e.stopPropagation(); onRetry() }}
             >
-              TRY AGAIN
+              PLAY AGAIN
             </button>
+          )}
+          {(runsLeft > 0 || !user) && (
+            <p className="text-center text-[10px] font-montserrat" style={{ color: '#F5E6C8', opacity: 0.3, marginTop: -4 }}>
+              or tap anywhere to restart
+            </p>
           )}
 
           <button

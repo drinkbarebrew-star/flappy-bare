@@ -32,7 +32,7 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
           className="text-xs font-montserrat tracking-[0.25em] uppercase"
           style={{ color: '#F5E6C8', opacity: 0.65 }}
         >
-          A Bare Brew Game · 320mg · Zero BS
+          320mg Caffeine · Zero Sugar · Zero BS
         </p>
       </div>
 

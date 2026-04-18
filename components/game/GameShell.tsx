@@ -96,11 +96,15 @@ export default function GameShell() {
   // Input handlers
   const handleFlap = useCallback(() => {
     if (gameState === 'idle') {
-      // Check run quota for logged-in users
       if (user && runsLeft <= 0) return
       engineRef.current?.flap()
     } else if (gameState === 'playing') {
       engineRef.current?.flap()
+    } else if (gameState === 'dead') {
+      if (user && runsLeft <= 0) return
+      setLastSession(null)
+      engineRef.current?.reset()
+      setTimeout(() => engineRef.current?.flap(), 100)
     }
   }, [gameState, user, runsLeft])
 
