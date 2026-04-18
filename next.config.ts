@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // HTML pages must never be cached — stale HTML means old JS bundles
+        source: '/(|game|learn|profile|leaderboard|rewards|auth/signup|auth/login)',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },

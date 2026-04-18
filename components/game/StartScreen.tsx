@@ -36,22 +36,22 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         </p>
       </div>
 
-      {/* Logo — Bare Brew circular BB icon */}
+      {/* Logo — actual Bare Brew brand mark (bear + coffee mug) */}
       <div
         className="mb-6"
         style={{
-          width: 100,
-          height: 100,
+          width: 110,
+          height: 110,
           borderRadius: '50%',
           overflow: 'hidden',
-          border: '2.5px solid rgba(233, 176, 38, 0.55)',
-          boxShadow: '0 0 32px rgba(233, 176, 38, 0.4)',
+          border: '3px solid rgba(233, 176, 38, 0.6)',
+          boxShadow: '0 0 36px rgba(233, 176, 38, 0.45)',
           flexShrink: 0,
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/icons/icon-192.svg"
+          src="/bear.png"
           alt="Bare Brew Bear"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
@@ -158,6 +158,14 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
             drinkbarebrew.com
           </a>
         </p>
+      </div>
+
+      {/* Version badge — top-right corner for deployment verification */}
+      <div
+        className="absolute top-3 right-3 text-[10px] font-montserrat"
+        style={{ color: '#F5E6C8', opacity: 0.25 }}
+      >
+        v5
       </div>
     </div>
   )
