@@ -361,7 +361,14 @@ export class GameEngine {
     const pf = 12 // px inward per side
 
     // Ground / ceiling
-    if (bear.y + br > H - cfg.groundHeight || bear.y - br < 0) return true
+    if (bear.y + br > H - cfg.groundHeight) {
+      console.log('[DIE] ground  bear.y=', bear.y.toFixed(1), 'H=', H, 'ground=', H - cfg.groundHeight)
+      return true
+    }
+    if (bear.y - br < 0) {
+      console.log('[DIE] ceiling bear.y=', bear.y.toFixed(1))
+      return true
+    }
 
     // Pillars — true circle vs AABB (no false corner kills)
     for (const p of pillars) {
@@ -370,11 +377,17 @@ export class GameEngine {
 
       // Top pipe: rect from (pLeft, 0) to (pLeft+pW, topHeight-pf)
       const topBottom = p.topHeight - pf
-      if (topBottom > 0 && circleHitsRect(bear.x, bear.y, br, pLeft, 0, pW, topBottom)) return true
+      if (topBottom > 0 && circleHitsRect(bear.x, bear.y, br, pLeft, 0, pW, topBottom)) {
+        console.log('[DIE] top-pipe  bear.y=', bear.y.toFixed(1), 'topHeight=', p.topHeight.toFixed(1), 'gap=', cfg.pipeGap)
+        return true
+      }
 
       // Bottom pipe: rect from (pLeft, botTop) down to ground
       const botTop = p.topHeight + cfg.pipeGap + pf
-      if (botTop < H && circleHitsRect(bear.x, bear.y, br, pLeft, botTop, pW, H - botTop)) return true
+      if (botTop < H && circleHitsRect(bear.x, bear.y, br, pLeft, botTop, pW, H - botTop)) {
+        console.log('[DIE] bot-pipe  bear.y=', bear.y.toFixed(1), 'botTop=', botTop.toFixed(1), 'gap=', cfg.pipeGap)
+        return true
+      }
     }
 
     return false

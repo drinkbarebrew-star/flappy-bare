@@ -452,7 +452,9 @@ export class Renderer {
     ctx.restore()
 
     // ── Rim / lip at open end (absolute coords, outside clip) ─
-    const rimY = flip ? y : y + h - 13
+    // flip=true (top can): open end is at bottom → rimY = y + h - 13
+    // flip=false (bottom can): open end is at top → rimY = y
+    const rimY = flip ? y + h - 13 : y
     ctx.fillStyle = '#c8a030'
     ctx.fillRect(x - 3, rimY, w + 6, 14)
     ctx.fillStyle = COLORS.canHighlight
