@@ -117,6 +117,7 @@ export class GameEngine {
 
   private startGame() {
     this.stopLoop()
+    this.resize()         // ensure W/H are correct before initObjects uses them
     this.initObjects()
     this.state = 'playing'
     this.callbacks.onStateChange('playing')
@@ -228,16 +229,20 @@ export class GameEngine {
       bear.vy = Math.abs(bear.vy) * 0.25  // redirect downward, kill energy
     }
 
-    // Spawn pillars
-    if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval || this.pillars.length === 0) {
+    // Spawn pillars — purely time-based so the interval is always stable.
+    // On frame 1: lastPipeSpawn=0, timestamp>>pipeSpawnInterval → fires immediately.
+    // The || pillars.length===0 safety net was removed: it reset lastPipeSpawn when
+    // a pipe cleared between spawns, delaying the next spawn by a full interval and
+    // causing long no-pipe gaps after ~3 pipes.
+    if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval) {
+      const isFirst = this.pillars.length === 0 && this.score === 0
       const minTop = 60
-      const maxTop = H - cfg.groundHeight - cfg.pipeGap - 60
-      // All pipes: center gap within ±40px of bear's current Y — always reachable
+      const maxTop = Math.max(minTop + 1, H - cfg.groundHeight - cfg.pipeGap - 60)
       const gapCenter = bear.y + (Math.random() - 0.5) * 80
       const topH = Math.max(minTop, Math.min(maxTop, gapCenter - cfg.pipeGap / 2))
-      // First pipe spawns on-screen (at 60% across) so it arrives in ~1s, not 3s.
-      // Without this, the bear falls to the ground before the first pipe ever arrives.
-      const spawnX = this.pillars.length === 0 ? W * 0.6 : W + 30
+      // First pipe spawns on-screen so it arrives in ~1s instead of ~3.5s.
+      // Without this the bear hits the ground before the first pipe ever arrives.
+      const spawnX = isFirst ? W * 0.6 : W + 30
       const pillar: Pillar = {
         id: uid(),
         x: spawnX,
@@ -247,6 +252,8 @@ export class GameEngine {
       }
       this.pillars.push(pillar)
       this.lastPipeSpawn = timestamp
+      console.log('[SPAWN] pipe', this.pillars.length, 'x=', spawnX.toFixed(0),
+        'topH=', topH.toFixed(0), 'gap=', cfg.pipeGap, 'score=', this.score)
     }
 
     // Move pillars

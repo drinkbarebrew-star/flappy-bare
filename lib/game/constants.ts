@@ -37,7 +37,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   gravity: 0.22,
   flapForce: -8.5,
   pipeWidth: 80,
-  pipeGap: 250,
+  pipeGap: 260,
   pipeSpeed: 1.6,
   pipeSpeedMax: 2.5,
   pipeSpeedIncrement: 0.02,
