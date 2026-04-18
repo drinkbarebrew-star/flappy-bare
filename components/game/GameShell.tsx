@@ -153,7 +153,7 @@ export default function GameShell() {
         ref={innerRef}
         className="relative w-full h-full"
         style={{ maxWidth: 480, maxHeight: 854 }}
-        onPointerDown={(e) => { e.preventDefault(); handleFlap() }}
+        onPointerDown={(e) => { if (e.pointerType === 'touch') return; e.preventDefault(); handleFlap() }}
       >
         <canvas
           ref={canvasRef}

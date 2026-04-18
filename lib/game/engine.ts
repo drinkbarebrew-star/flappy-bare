@@ -150,13 +150,14 @@ export class GameEngine {
   private loop = (timestamp: number) => {
     if (!this.lastTime) this.lastTime = timestamp
     const dt = Math.min(timestamp - this.lastTime, 50)
+    const dtFactor = dt / 16.667
     this.lastTime = timestamp
 
     this.ctx.save()
 
     if (this.screenShake > 0) {
       this.renderer.applyShake(this.screenShake)
-      this.screenShake *= 0.82
+      this.screenShake *= Math.pow(0.82, dtFactor)
       if (this.screenShake < 0.5) this.screenShake = 0
     }
 
@@ -203,17 +204,18 @@ export class GameEngine {
   private update(timestamp: number, dt: number) {
     if (this.state !== 'playing') return
 
+    const dtFactor = dt / 16.667
     const { cfg, bear, W, H } = this
     const speed = this.currentSpeed
 
-    this.renderer.tick(speed)
+    this.renderer.tick(speed * dtFactor)
 
     // Bear physics
-    bear.vy += cfg.gravity
-    bear.y += bear.vy
+    bear.vy += cfg.gravity * dtFactor
+    bear.y  += bear.vy * dtFactor
     bear.rotation = Math.max(-0.5, Math.min(bear.vy * 0.06, 1.3))
-    bear.flapPhase += bear.flapSpeed * 0.1
-    bear.flapSpeed *= 0.92
+    bear.flapPhase += bear.flapSpeed * 0.1 * dtFactor
+    bear.flapSpeed *= Math.pow(0.92, dtFactor)
     if (bear.flapSpeed < 2) bear.flapSpeed = 2
 
     // Spawn pillars
@@ -237,7 +239,7 @@ export class GameEngine {
     // Move pillars
     for (let i = this.pillars.length - 1; i >= 0; i--) {
       const p = this.pillars[i]
-      p.x -= speed
+      p.x -= speed * dtFactor
 
       // Spawn coin in gap center
       if (!p.coinSpawned && p.x < W * 0.6) {
@@ -297,8 +299,8 @@ export class GameEngine {
 
     // Move coins
     for (const c of this.coins) {
-      c.x -= speed
-      c.animPhase += 0.06
+      c.x -= speed * dtFactor
+      c.animPhase += 0.06 * dtFactor
     }
     this.coins = this.coins.filter(c => c.x > -30)
 
@@ -323,18 +325,18 @@ export class GameEngine {
     // Tick particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i]
-      p.x += p.vx
-      p.y += p.vy
-      p.vy += 0.12
-      p.life -= p.decay
+      p.x += p.vx * dtFactor
+      p.y += p.vy * dtFactor
+      p.vy += 0.12 * dtFactor
+      p.life -= p.decay * dtFactor
       if (p.life <= 0) this.particles.splice(i, 1)
     }
 
     // Tick score floats
     for (let i = this.scoreFloats.length - 1; i >= 0; i--) {
       const f = this.scoreFloats[i]
-      f.y += f.vy
-      f.life -= 0.018
+      f.y += f.vy * dtFactor
+      f.life -= 0.018 * dtFactor
       if (f.life <= 0) this.scoreFloats.splice(i, 1)
     }
   }
@@ -424,15 +426,19 @@ export class GameEngine {
     this.animFrame = requestAnimationFrame(this.deadBearFall)
   }
 
-  private deadBearFall = () => {
+  private deadBearFall = (timestamp: number) => {
+    const dt = Math.min(timestamp - this.lastTime, 50)
+    const dtFactor = dt / 16.667
+    this.lastTime = timestamp
+
     this.ctx.save()
     this.renderer.drawBackground()
     for (const p of this.pillars) this.renderer.drawPillar(p)
     for (const c of this.coins) this.renderer.drawCoin(c, Date.now())
 
-    this.bear.vy += this.cfg.gravity
-    this.bear.y += this.bear.vy
-    this.bear.rotation += 0.09
+    this.bear.vy += this.cfg.gravity * dtFactor
+    this.bear.y  += this.bear.vy * dtFactor
+    this.bear.rotation += 0.09 * dtFactor
 
     if (this.bear.y < this.H + 120) {
       this.renderer.drawBear(this.bear)
@@ -441,7 +447,8 @@ export class GameEngine {
     // Tick particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i]
-      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= p.decay
+      p.x += p.vx * dtFactor; p.y += p.vy * dtFactor
+      p.vy += 0.12 * dtFactor; p.life -= p.decay * dtFactor
       if (p.life <= 0) this.particles.splice(i, 1)
     }
     this.renderer.drawParticles(this.particles)
