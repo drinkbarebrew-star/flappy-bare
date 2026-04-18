@@ -355,17 +355,26 @@ export class GameEngine {
 
   private checkCollision(): boolean {
     const { bear, pillars, cfg, H } = this
-    const br = bear.radius
+    // Use 75% of nominal radius — well inside the visual sprite
+    const br = bear.radius * 0.75
+    // Shrink pipe hitboxes inward for forgiveness
+    const pf = 6 // px inward per side
 
     // Ground / ceiling
     if (bear.y + br > H - cfg.groundHeight || bear.y - br < 0) return true
 
-    // Pillars
+    // Pillars — true circle vs AABB (no false corner kills)
     for (const p of pillars) {
-      if (bear.x + br > p.x && bear.x - br < p.x + cfg.pipeWidth) {
-        if (bear.y - br < p.topHeight) return true
-        if (bear.y + br > p.topHeight + cfg.pipeGap) return true
-      }
+      const pLeft = p.x + pf
+      const pW    = cfg.pipeWidth - pf * 2
+
+      // Top pipe: rect from (pLeft, 0) to (pLeft+pW, topHeight-pf)
+      const topBottom = p.topHeight - pf
+      if (topBottom > 0 && circleHitsRect(bear.x, bear.y, br, pLeft, 0, pW, topBottom)) return true
+
+      // Bottom pipe: rect from (pLeft, botTop) down to ground
+      const botTop = p.topHeight + cfg.pipeGap + pf
+      if (botTop < H && circleHitsRect(bear.x, bear.y, br, pLeft, botTop, pW, H - botTop)) return true
     }
 
     return false
@@ -477,3 +486,15 @@ export class GameEngine {
 
 // Inline to avoid circular import
 const COLORS_INLINE = { lightGold: '#FFC72C' }
+
+// Circle vs axis-aligned rect — forgiving at corners (no false kills)
+function circleHitsRect(
+  cx: number, cy: number, r: number,
+  rx: number, ry: number, rw: number, rh: number
+): boolean {
+  const nearX = Math.max(rx, Math.min(cx, rx + rw))
+  const nearY = Math.max(ry, Math.min(cy, ry + rh))
+  const dx = cx - nearX
+  const dy = cy - nearY
+  return dx * dx + dy * dy < r * r
+}
