@@ -178,18 +178,9 @@ export class GameEngine {
   private startIdleLoop() {
     const idle = () => {
       if (this.state !== 'idle') return
-      const t = Date.now() / 1000
       this.ctx.save()
       this.renderer.drawBackground()
-      // Center the idle bear (gameplay bear stays at x=W*0.25)
-      const idleBear = {
-        ...this.bear,
-        x: this.W * 0.5,
-        y: this.H * 0.42 + Math.sin(t * 2) * 12,
-        rotation: Math.sin(t * 3) * 0.07,
-        flapPhase: t * 4,
-      }
-      this.renderer.drawBear(idleBear)
+      // Bear is rendered as a circular HTML element in the StartScreen overlay
       this.ctx.restore()
       this.idleFrame = requestAnimationFrame(idle)
     }

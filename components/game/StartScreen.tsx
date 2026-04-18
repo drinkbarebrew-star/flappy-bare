@@ -16,13 +16,14 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
 
   return (
     <div
-      className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto fade-in"
+      className="absolute inset-0 flex flex-col items-center pointer-events-auto fade-in"
+      style={{ justifyContent: 'flex-start', paddingTop: '6vh' }}
       onClick={noRuns ? undefined : onTap}
     >
       {/* Logo */}
-      <div className="flex flex-col items-center gap-3 mb-8">
+      <div className="flex flex-col items-center gap-2 mb-5">
         <h1
-          className="font-bebas text-[72px] leading-none text-glow-gold select-none"
+          className="font-bebas text-[68px] leading-none text-glow-gold select-none"
           style={{ color: '#E9B026', letterSpacing: '6px' }}
         >
           FLAPPY BARE
@@ -35,13 +36,31 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         </p>
       </div>
 
-      {/* Bear is drawn on the canvas behind this overlay — no emoji needed */}
-      <div className="mb-12" />
+      {/* Bear — circular HTML image */}
+      <div
+        className="mb-6"
+        style={{
+          width: 84,
+          height: 84,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '2.5px solid rgba(233, 176, 38, 0.55)',
+          boxShadow: '0 0 28px rgba(233, 176, 38, 0.35)',
+          flexShrink: 0,
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/bear.png"
+          alt="Bare Brew Bear"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
 
       {/* Best score */}
       {bestScore > 0 && (
         <div
-          className="mb-5 px-5 py-2 rounded-2xl flex items-center gap-3"
+          className="mb-4 px-5 py-2 rounded-2xl flex items-center gap-3"
           style={{
             background: 'rgba(42, 27, 13, 0.7)',
             border: '1px solid rgba(233, 176, 38, 0.25)',
@@ -99,13 +118,16 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         </button>
       )}
 
-      {/* Auth CTAs */}
-      <div className="absolute bottom-8 flex flex-col items-center gap-2">
+      {/* Auth CTAs — safe area aware */}
+      <div
+        className="absolute flex flex-col items-center gap-2"
+        style={{ bottom: 'max(28px, calc(env(safe-area-inset-bottom) + 16px))' }}
+      >
         {!user ? (
           <>
             <Link
               href="/auth/signup"
-              className="text-sm font-montserrat font-semibold px-6 py-2 rounded-xl transition-colors"
+              className="text-sm font-montserrat font-semibold px-6 py-3 rounded-xl transition-colors"
               style={{
                 background: 'rgba(233, 176, 38, 0.15)',
                 color: '#E9B026',
