@@ -36,22 +36,22 @@ export default function StartScreen({ bestScore, user, runsLeft, onTap }: StartS
         </p>
       </div>
 
-      {/* Bear — circular HTML image */}
+      {/* Logo — Bare Brew circular BB icon */}
       <div
         className="mb-6"
         style={{
-          width: 84,
-          height: 84,
+          width: 100,
+          height: 100,
           borderRadius: '50%',
           overflow: 'hidden',
           border: '2.5px solid rgba(233, 176, 38, 0.55)',
-          boxShadow: '0 0 28px rgba(233, 176, 38, 0.35)',
+          boxShadow: '0 0 32px rgba(233, 176, 38, 0.4)',
           flexShrink: 0,
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/bear.png"
+          src="/icons/icon-192.svg"
           alt="Bare Brew Bear"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
