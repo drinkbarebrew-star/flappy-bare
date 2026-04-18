@@ -230,14 +230,17 @@ export class GameEngine {
 
     // Spawn pillars
     if (timestamp - this.lastPipeSpawn > cfg.pipeSpawnInterval || this.pillars.length === 0) {
-      const minTop = 90
-      const maxTop = H - cfg.groundHeight - cfg.pipeGap - 90
+      const minTop = 60
+      const maxTop = H - cfg.groundHeight - cfg.pipeGap - 60
       // All pipes: center gap within ±40px of bear's current Y — always reachable
       const gapCenter = bear.y + (Math.random() - 0.5) * 80
       const topH = Math.max(minTop, Math.min(maxTop, gapCenter - cfg.pipeGap / 2))
+      // First pipe spawns on-screen (at 60% across) so it arrives in ~1s, not 3s.
+      // Without this, the bear falls to the ground before the first pipe ever arrives.
+      const spawnX = this.pillars.length === 0 ? W * 0.6 : W + 30
       const pillar: Pillar = {
         id: uid(),
-        x: W + 30,
+        x: spawnX,
         topHeight: topH,
         scored: false,
         coinSpawned: false,
@@ -371,32 +374,40 @@ export class GameEngine {
     const { bear, pillars, cfg, H } = this
     // Use 50% of nominal radius — well inside the visual sprite
     const br = bear.radius * 0.5
-    // Shrink pipe hitboxes inward for generous visual forgiveness
-    const pf = 30 // px inward per side
+    // Shrink pipe hitboxes inward — bear must visually overlap by >pf px to die
+    const pf = 20 // px inward per side
 
-    // Ground (ceiling is handled as a soft bounce in physics, not a kill)
-    // Extra 10px buffer — bear grazes the ground visually before dying
+    // Ground (ceiling handled as soft bounce in physics)
     if (bear.y + br > H - cfg.groundHeight + 10) {
-      console.log('[DIE] ground  bear.y=', bear.y.toFixed(1), 'H=', H, 'ground=', H - cfg.groundHeight)
+      console.log('[DIE] ground | bear.y=', bear.y.toFixed(1), 'limit=', (H - cfg.groundHeight).toFixed(1))
       return true
     }
 
-    // Pillars — true circle vs AABB (no false corner kills)
+    // Pillars — circle vs AABB, no false corner kills
     for (const p of pillars) {
       const pLeft = p.x + pf
       const pW    = cfg.pipeWidth - pf * 2
+      const gapTop    = p.topHeight
+      const gapBottom = p.topHeight + cfg.pipeGap
 
-      // Top pipe: rect from (pLeft, 0) to (pLeft+pW, topHeight-pf)
-      const topBottom = p.topHeight - pf
+      // Only check pipes that are near the bear horizontally
+      if (p.x + cfg.pipeWidth + br < bear.x || p.x - br > bear.x) continue
+
+      // Top pipe: y from 0 to (topHeight - pf)
+      const topBottom = gapTop - pf
       if (topBottom > 0 && circleHitsRect(bear.x, bear.y, br, pLeft, 0, pW, topBottom)) {
-        console.log('[DIE] top-pipe  bear.y=', bear.y.toFixed(1), 'topHeight=', p.topHeight.toFixed(1), 'gap=', cfg.pipeGap)
+        console.log('[DIE] top-pipe | bear.y=', bear.y.toFixed(1),
+          'gapTop=', gapTop.toFixed(1), 'gapBottom=', gapBottom.toFixed(1),
+          'pipe.x=', p.x.toFixed(1), 'bear.x=', bear.x.toFixed(1))
         return true
       }
 
-      // Bottom pipe: rect from (pLeft, botTop) down to ground
-      const botTop = p.topHeight + cfg.pipeGap + pf
+      // Bottom pipe: y from (topHeight + gap + pf) to H
+      const botTop = gapBottom + pf
       if (botTop < H && circleHitsRect(bear.x, bear.y, br, pLeft, botTop, pW, H - botTop)) {
-        console.log('[DIE] bot-pipe  bear.y=', bear.y.toFixed(1), 'botTop=', botTop.toFixed(1), 'gap=', cfg.pipeGap)
+        console.log('[DIE] bot-pipe | bear.y=', bear.y.toFixed(1),
+          'gapTop=', gapTop.toFixed(1), 'gapBottom=', gapBottom.toFixed(1),
+          'pipe.x=', p.x.toFixed(1), 'bear.x=', bear.x.toFixed(1))
         return true
       }
     }
