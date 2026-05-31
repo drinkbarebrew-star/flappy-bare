@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
+
   const { searchParams } = new URL(req.url)
   const type = searchParams.get('type') || 'all_time'  // all_time | weekly
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
@@ -22,11 +26,17 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 })
     }
 
-    // Add rank
-    const ranked = (data || []).map((entry, i) => ({ ...entry, rank: i + 1 }))
-
-    // Get current user's rank if authenticated
     const { data: { user } } = await supabase.auth.getUser()
+
+    const entries = (data || []).map((entry, i) => ({
+      rank: i + 1,
+      username: entry.username,
+      all_time_best: entry.all_time_best,
+      weekly_best: entry.weekly_best,
+      total_coins: entry.total_coins,
+      isMe: user ? entry.user_id === user.id : false,
+    }))
+
     let myRank: number | null = null
 
     if (user) {
@@ -47,7 +57,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ entries: ranked, myRank, type })
+    return NextResponse.json({ entries, myRank, type })
   } catch (err) {
     console.error('[leaderboard] error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

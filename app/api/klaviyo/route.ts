@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { upsertKlaviyoProfile } from '@/lib/klaviyo'
+import { rateLimit } from '@/lib/rate-limit'
 
 // POST /api/klaviyo — sync user to Klaviyo on signup/profile update
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

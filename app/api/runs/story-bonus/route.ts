@@ -1,10 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { ECONOMY } from '@/lib/game/constants'
+import { rateLimit } from '@/lib/rate-limit'
 
 // POST /api/runs/story-bonus
 // Claims the +1 IG story run bonus (max 1/day)
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

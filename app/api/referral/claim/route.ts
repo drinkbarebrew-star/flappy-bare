@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { ECONOMY } from '@/lib/game/constants'
+import { rateLimit } from '@/lib/rate-limit'
 
 // POST /api/referral/claim
 // Body: { code: string }
 // Called when a new user signs up via a referral link
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

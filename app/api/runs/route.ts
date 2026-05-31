@@ -3,10 +3,13 @@ import { createClient } from '@/lib/supabase/server'
 import { computeCoinsEarned } from '@/lib/economy/coins'
 import { ANTICHEAT, ECONOMY } from '@/lib/game/constants'
 import { trackKlaviyoEvent } from '@/lib/klaviyo'
+import { rateLimit } from '@/lib/rate-limit'
 import type { GameSession, RunEconomy } from '@/lib/game/types'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const body = await req.json() as {
       session: GameSession & { valid?: boolean }

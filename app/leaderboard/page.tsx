@@ -5,12 +5,12 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
 interface LeaderboardEntry {
-  user_id: string
   username: string
   all_time_best: number
   weekly_best: number
   total_coins: number
   rank: number
+  isMe: boolean
 }
 
 interface LeaderboardData {
@@ -162,13 +162,13 @@ export default function LeaderboardPage() {
             </div>
 
             {data.entries.map((entry, i) => {
-              const isMe = user?.id === entry.user_id
+              const isMe = entry.isMe
               const score = tab === 'all_time' ? entry.all_time_best : entry.weekly_best
               const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : null
 
               return (
                 <div
-                  key={entry.user_id}
+                  key={`${entry.rank}-${entry.username}`}
                   className="flex items-center px-4 py-3.5"
                   style={{
                     borderBottom: '1px solid rgba(233, 176, 38, 0.07)',

@@ -5,10 +5,13 @@ import { REWARDS, ECONOMY } from '@/lib/game/constants'
 import type { RewardTier } from '@/lib/game/constants'
 import { trackKlaviyoEvent } from '@/lib/klaviyo'
 import { bucksToCents } from '@/lib/economy/coins'
+import { rateLimit } from '@/lib/rate-limit'
 
 // POST /api/redeem
 // Body: { rewardBucks: number }
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -116,7 +119,9 @@ export async function POST(req: NextRequest) {
 }
 
 // GET /api/redeem — list user's redemptions
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = rateLimit(req)
+  if (limited) return limited
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
